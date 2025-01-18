@@ -78,19 +78,7 @@ const data = {
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
+          title: "Apostilas",
           url: "#",
         },
       ],
