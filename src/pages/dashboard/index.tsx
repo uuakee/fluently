@@ -103,7 +103,7 @@ const DashboardPage = () => {
                     <BreadcrumbList>
                         <BreadcrumbItem className="hidden md:block">
                         <BreadcrumbLink href="#">
-                            Portal do Aluno
+                            Aprendizagem
                         </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator className="hidden md:block" />

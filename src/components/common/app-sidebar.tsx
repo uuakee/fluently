@@ -45,15 +45,15 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "#",
+          url: "/dashboard",
         },
         {
-          title: "Materias",
-          url: "#",
+          title: "Disciplinas",
+          url: "/disciplinas",
         },
         {
           title: "Notas",
-          url: "#",
+          url: "/notas",
         },
       ],
     },
@@ -64,11 +64,11 @@ const data = {
       items: [
         {
           title: "Mensalidades",
-          url: "#",
+          url: "/mensalidades",
         },
         {
           title: "Declarações",
-          url: "#",
+          url: "/declaracoes",
         },
       ],
     },
@@ -79,7 +79,7 @@ const data = {
       items: [
         {
           title: "Apostilas",
-          url: "#",
+          url: "/apostilas",
         },
       ],
     },
