@@ -22,12 +22,37 @@ import { UserProfile } from "@/components/common/user-profile"
 import { DataTable } from "@/components/common/data-table"
 import { columns } from "@/components/common/columns"
 import type { Payment } from "@/components/common/columns"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { toast } from "react-hot-toast"
 
 interface School {
     id: number
     name: string
     createdAt: string
     status: boolean
+}
+
+interface Student {
+  id: number
+  name: string
+  email: string
+  adress: string
+  role: string
+  createdAt: string
+  updatedAt: string
 }
 
 const MensalidadesPage = () => {
@@ -38,6 +63,11 @@ const MensalidadesPage = () => {
     const [selectedSchool, setSelectedSchool] = useState<School | null>(null)
     const [editName, setEditName] = useState("")
     const [payments, setPayments] = useState<Payment[]>([])
+    const [students, setStudents] = useState<Student[]>([])
+    const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
+    const [open, setOpen] = useState(false)
+    const [installmentAmount, setInstallmentAmount] = useState("499")
+    const [numberOfInstallments, setNumberOfInstallments] = useState("12")
 
     useEffect(() => {
         const fetchSchools = async () => {
@@ -53,42 +83,70 @@ const MensalidadesPage = () => {
         fetchSchools()
     }, [])
 
-    useEffect(() => {
-        const fetchPayments = async () => {
-            try {
-                const response = await fetch('https://v1.destinify.com.br/api/payment/get-all-installments')
-                const data = await response.json()
-                setPayments(data)
-            } catch (error) {
-                console.error('Erro ao buscar mensalidades:', error)
-            }
+    const fetchPayments = async () => {
+        try {
+            const response = await fetch('https://v1.destinify.com.br/api/payment/get-all-installments')
+            const data = await response.json()
+            setPayments(data)
+        } catch (error) {
+            console.error('Erro ao buscar mensalidades:', error)
         }
+    }
 
+    useEffect(() => {
         fetchPayments()
     }, [])
 
-    const handleAddUnit = async () => {
-        if (!newUnitName.trim()) return
+    useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                const response = await fetch('https://v1.destinify.com.br/api/user/students')
+                if (!response.ok) {
+                    throw new Error('Falha ao buscar estudantes')
+                }
+                const data = await response.json()
+                const studentsList = Array.isArray(data) ? data.filter(user => user.role === 'STUDENT') : []
+                setStudents(studentsList)
+            } catch (error) {
+                console.error('Erro ao buscar estudantes:', error)
+                setStudents([])
+            }
+        }
+
+        fetchStudents()
+    }, [])
+
+
+    const handleCreateInstallments = async () => {
+        if (!selectedStudent) {
+            toast.error("Selecione um estudante")
+            return
+        }
 
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/school/create', {
+            const response = await fetch('https://v1.destinify.com.br/api/payment/create-installments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: newUnitName.trim(),
+                    userId: selectedStudent.id,
+                    amount: installmentAmount,
+                    numberOfInstallments: numberOfInstallments
                 }),
             })
 
             if (response.ok) {
-                const newSchool = await response.json()
-                setSchools([...schools, newSchool])
-                setNewUnitName("")
+                toast.success("Mensalidades criadas com sucesso!")
                 setIsDialogOpen(false)
+                setSelectedStudent(null)
+                fetchPayments() // Recarrega a lista de mensalidades
+            } else {
+                toast.error("Erro ao criar mensalidades")
             }
         } catch (error) {
-            console.error('Erro ao criar unidade:', error)
+            console.error('Erro ao criar mensalidades:', error)
+            toast.error("Erro ao criar mensalidades")
         }
     }
 
@@ -117,7 +175,7 @@ const MensalidadesPage = () => {
                 <main className="p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold">Mensalidades</h2>
-                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button className="bg-brand hover:bg-brand/90">
                                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -126,23 +184,81 @@ const MensalidadesPage = () => {
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Adicionar Nova Unidade</DialogTitle>
-                                    <DialogDescription>Por favor, insira o nome da unidade.</DialogDescription>
+                                    <DialogTitle>Cadastrar Mensalidade</DialogTitle>
+                                    <DialogDescription>
+                                        Selecione o estudante e configure as mensalidades.
+                                    </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
-                                    <div className="grid grid-cols-1 items-center gap-4">
+                                    <div className="grid gap-2">
+                                        <Label>Estudante</Label>
+                                        <Popover open={open} onOpenChange={setOpen}>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    aria-expanded={open}
+                                                    className="justify-between"
+                                                >
+                                                    {selectedStudent ? selectedStudent.name : "Selecione um estudante..."}
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-[400px] p-0">
+                                                <Command>
+                                                    <CommandInput placeholder="Buscar estudante..." />
+                                                    <CommandEmpty>Nenhum estudante encontrado.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {Array.isArray(students) && students.length > 0 ? (
+                                                            students.map((student) => (
+                                                                <CommandItem
+                                                                    key={student.id}
+                                                                    onSelect={() => {
+                                                                        setSelectedStudent(student)
+                                                                        setOpen(false)
+                                                                    }}
+                                                                >
+                                                                    <Check
+                                                                        className={cn(
+                                                                            "mr-2 h-4 w-4",
+                                                                            selectedStudent?.id === student.id ? "opacity-100" : "opacity-0"
+                                                                        )}
+                                                                    />
+                                                                    {student.name}
+                                                                </CommandItem>
+                                                            ))
+                                                        ) : (
+                                                            <CommandItem disabled>Nenhum estudante encontrado</CommandItem>
+                                                        )}
+                                                    </CommandGroup>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>Valor da Mensalidade</Label>
                                         <Input
-                                            id="name"
-                                            placeholder="Nome da unidade"
-                                            value={newUnitName}
-                                            onChange={(e) => setNewUnitName(e.target.value)}
-                                            className="col-span-3"
+                                            type="number"
+                                            value={installmentAmount}
+                                            onChange={(e) => setInstallmentAmount(e.target.value)}
+                                            placeholder="Valor da mensalidade"
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>Número de Parcelas</Label>
+                                        <Input
+                                            type="number"
+                                            value={numberOfInstallments}
+                                            onChange={(e) => setNumberOfInstallments(e.target.value)}
+                                            placeholder="Número de parcelas"
                                         />
                                     </div>
                                 </div>
-                                <Button onClick={handleAddUnit}>Adicionar</Button>
+                                <Button onClick={handleCreateInstallments}>
+                                    Cadastrar Mensalidades
+                                </Button>
                             </DialogContent>
-                        </Dialog>
+                        </Dialog> */}
                     </div>
                     <div>
                         <DataTable columns={columns} data={payments} />

@@ -6,7 +6,7 @@ export default function Document() {
     <Html lang="en">
       <Head />
       <head>
-        <title>Fluently</title>
+        <title>Issenguel Idiomas - Portal da Escola</title>
         <meta name="description" content="Uma solução para escolas de idiomas gerir seu ecosistema de forma fácil e eficiente!" />
       </head>
       <body className="antialiased">
