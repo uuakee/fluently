@@ -74,36 +74,24 @@ const data = {
       ],
     },
     {
-        title: "Professores",
+        title: "Gestão",
         url: "#",
         icon: Users2,
         isActive: false,
         items: [
             {
-              title: "Lista de professores",
-              url: "/notas",
+              title: "Professores",
+              url: "/admin/professores",
+            },
+            {
+                title: "Alunos",
+                url: "/admin/professores",
+            },
+            {
+                title: "Turmas",
+                url: "/admin/turmas",
             },
           ]
-    },
-    {
-      title: "Alunos",
-      url: "#",
-      icon: Users2,
-      isActive: false,
-      items: [
-        {
-          title: "Lista de alunos",
-          url: "/dashboard",
-        },
-        {
-          title: "Notas",
-          url: "/disciplinas",
-        },
-        {
-          title: "Classes",
-          url: "/notas",
-        },
-      ],
     },
     {
       title: "Materiais didáticos",
@@ -116,29 +104,6 @@ const data = {
         },
       ],
     },
-    // {
-    //   title: "Settings",
-    //   url: "#",
-    //   icon: Settings2,
-    //   items: [
-    //     {
-    //       title: "General",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Team",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Billing",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Limits",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
   ],
   navSecondary: [
     {
