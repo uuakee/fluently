@@ -2,6 +2,9 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Eye } from "lucide-react"
+import { InstallmentsDialog } from "./installments-dialog"
 
 export type Payment = {
   user: {
@@ -32,9 +35,9 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "pendingInstallments",
     header: "Parcelas Pendentes",
     cell: ({ row }) => {
-      const pendingInstallments = row.getValue("pendingInstallments")
+      const pendingInstallments = row.getValue("pendingInstallments") as number
       return (
-        <Badge variant={pendingInstallments > 0 ? "destructive" : "success"}>
+        <Badge variant={pendingInstallments > 0 ? "destructive" : "secondary"}>
           {pendingInstallments}
         </Badge>
       )
@@ -62,6 +65,21 @@ export const columns: ColumnDef<Payment>[] = [
         currency: "BRL",
       }).format(amount)
       return <div className="text-right font-medium">{formatted}</div>
+    },
+  },
+  {
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => {
+      const payment = row.original
+
+      return (
+        <InstallmentsDialog userId={payment.user.id}>
+          <Button variant="ghost" size="icon">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </InstallmentsDialog>
+      )
     },
   },
 ] 
