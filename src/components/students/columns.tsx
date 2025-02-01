@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Table } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -71,6 +71,10 @@ function DeleteStudentDialog({
   )
 }
 
+type TableMeta = {
+  refetch: () => Promise<void>
+}
+
 export const columns: ColumnDef<Student>[] = [
   {
     accessorKey: "name",
@@ -119,7 +123,7 @@ export const columns: ColumnDef<Student>[] = [
 
           if (response.ok) {
             toast.success("Aluno excluído com sucesso!")
-            await table.options.meta?.refetch?.()
+            await (table.options.meta as TableMeta).refetch()
           } else {
             toast.error("Erro ao excluir aluno")
           }
