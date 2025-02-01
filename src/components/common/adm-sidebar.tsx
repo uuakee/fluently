@@ -65,11 +65,11 @@ const data = {
       items: [
         {
           title: "Mensalidades",
-          url: "/mensalidades",
+          url: "/admin/mensalidades",
         },
         {
           title: "Declarações",
-          url: "/declaracoes",
+          url: "/admin/declaracoes",
         },
       ],
     },
@@ -100,7 +100,7 @@ const data = {
       items: [
         {
           title: "Apostilas",
-          url: "/apostilas",
+          url: "/admin/apostilas",
         },
       ],
     },
