@@ -48,7 +48,7 @@ export function InstallmentsDialog({ children, userId }: InstallmentsDialogProps
 
   const fetchInstallments = async () => {
     try {
-      const response = await fetch(`http://localhost:1938/api/payment/get-installments/${userId}`)
+      const response = await fetch(`https://v1.destinify.com.br/api/payment/get-installments/${userId}`)
       const data = await response.json()
       setInstallments(data)
     } catch (error) {
@@ -71,7 +71,7 @@ export function InstallmentsDialog({ children, userId }: InstallmentsDialogProps
   const handlePayment = async (installmentId: number) => {
     setLoading(installmentId)
     try {
-      const response = await fetch(`http://localhost:1938/api/payment/${installmentId}/status`, {
+      const response = await fetch(`https://v1.destinify.com.br/api/payment/${installmentId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

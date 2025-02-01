@@ -42,7 +42,7 @@ const MensalidadesPage = () => {
     useEffect(() => {
         const fetchSchools = async () => {
             try {
-                const response = await fetch('http://localhost:1938/api/school/list')
+                const response = await fetch('https://v1.destinify.com.br/api/school/list')
                 const data = await response.json()
                 setSchools(data)
             } catch (error) {
@@ -56,7 +56,7 @@ const MensalidadesPage = () => {
     useEffect(() => {
         const fetchPayments = async () => {
             try {
-                const response = await fetch('http://localhost:1938/api/payment/get-all-installments')
+                const response = await fetch('https://v1.destinify.com.br/api/payment/get-all-installments')
                 const data = await response.json()
                 setPayments(data)
             } catch (error) {
@@ -71,7 +71,7 @@ const MensalidadesPage = () => {
         if (!newUnitName.trim()) return
 
         try {
-            const response = await fetch('http://localhost:1938/api/school/create', {
+            const response = await fetch('https://v1.destinify.com.br/api/school/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
