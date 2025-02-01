@@ -19,12 +19,23 @@ import { PlusCircle } from 'lucide-react'
 import { Table, TableCaption, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { UserProfile } from "@/components/common/user-profile"
+import { DataTable } from "@/components/common/data-table"
+import { columns } from "@/components/teachers/columns"
+import type { Teacher } from "@/components/teachers/columns"
+import { toast } from "sonner"
 
 interface School {
     id: number
     name: string
     createdAt: string
     status: boolean
+}
+
+interface CreateTeacherData {
+    name: string
+    email: string
+    password: string
+    adress: string
 }
 
 const ProfessoresPage = () => {
@@ -34,6 +45,13 @@ const ProfessoresPage = () => {
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const [selectedSchool, setSelectedSchool] = useState<School | null>(null)
     const [editName, setEditName] = useState("")
+    const [teachers, setTeachers] = useState<Teacher[]>([])
+    const [formData, setFormData] = useState<CreateTeacherData>({
+        name: "",
+        email: "",
+        password: "",
+        adress: ""
+    })
 
     useEffect(() => {
         const fetchSchools = async () => {
@@ -47,6 +65,25 @@ const ProfessoresPage = () => {
         }
 
         fetchSchools()
+    }, [])
+
+    const fetchTeachers = async () => {
+        try {
+            const response = await fetch('https://v1.destinify.com.br/api/user/teachers')
+            if (!response.ok) {
+                throw new Error('Falha ao buscar professores')
+            }
+            const data = await response.json()
+            const teachersList = Array.isArray(data) ? data.filter(user => user.role === 'TEACHER') : []
+            setTeachers(teachersList)
+        } catch (error) {
+            console.error('Erro ao buscar professores:', error)
+            setTeachers([])
+        }
+    }
+
+    useEffect(() => {
+        fetchTeachers()
     }, [])
 
     const handleAddUnit = async () => {
@@ -108,6 +145,34 @@ const ProfessoresPage = () => {
         }
     }
 
+    const handleCreateTeacher = async () => {
+        try {
+            const response = await fetch('https://v1.destinify.com.br/api/user/create-teacher', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    role: "TEACHER"
+                }),
+            })
+
+            if (response.ok) {
+                toast.success("Professor cadastrado com sucesso!")
+                setIsDialogOpen(false)
+                setFormData({ name: "", email: "", password: "", adress: "" })
+                // Recarrega a lista de professores
+                fetchTeachers()
+            } else {
+                toast.error("Erro ao cadastrar professor")
+            }
+        } catch (error) {
+            console.error('Erro ao cadastrar professor:', error)
+            toast.error("Erro ao cadastrar professor")
+        }
+    }
+
     return (
         <SidebarProvider>
             <AdmSidebar />
@@ -142,26 +207,59 @@ const ProfessoresPage = () => {
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Adicionar Nova Unidade</DialogTitle>
-                                    <DialogDescription>Por favor, insira o nome da unidade.</DialogDescription>
+                                    <DialogTitle>Cadastrar Professor</DialogTitle>
+                                    <DialogDescription>
+                                        Preencha os dados do professor para cadastrá-lo no sistema.
+                                    </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
-                                    <div className="grid grid-cols-1 items-center gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="name">Nome completo</Label>
                                         <Input
                                             id="name"
-                                            placeholder="Nome da unidade"
-                                            value={newUnitName}
-                                            onChange={(e) => setNewUnitName(e.target.value)}
-                                            className="col-span-3"
+                                            placeholder="Nome do professor"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            placeholder="email@exemplo.com"
+                                            value={formData.email}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="password">Senha</Label>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            placeholder="Digite a senha"
+                                            value={formData.password}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="adress">Endereço</Label>
+                                        <Input
+                                            id="adress"
+                                            placeholder="Endereço completo"
+                                            value={formData.adress}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, adress: e.target.value }))}
                                         />
                                     </div>
                                 </div>
-                                <Button onClick={handleAddUnit}>Adicionar</Button>
+                                <Button onClick={handleCreateTeacher}>
+                                    Cadastrar Professor
+                                </Button>
                             </DialogContent>
                         </Dialog>
                     </div>
-                    <div className="">
-
+                    <div>
+                        <DataTable columns={columns} data={teachers} />
                     </div>
                 </main>
             </SidebarInset>

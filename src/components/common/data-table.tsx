@@ -26,11 +26,19 @@ import { Button } from "@/components/ui/button"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  meta?: {
+    refetch: () => Promise<void>
+  }
+  state?: {
+    isLoading?: boolean
+  }
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  meta,
+  state
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
 
