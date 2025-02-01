@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AdmSidebar } from "@/components/common/adm-sidebar"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
@@ -16,22 +16,95 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PlusCircle } from 'lucide-react'
-import { Table, TableCaption, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableCaption, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { UserProfile } from "@/components/common/user-profile"
+
+interface School {
+    id: number
+    name: string
+    createdAt: string
+    status: boolean
+}
 
 const UnidadesPage = () => {
-    const [units, setUnits] = useState([
-        { id: 1, name: "Unidade São Paulo" },
-        { id: 2, name: "Unidade Rio de Janeiro" },
-        { id: 3, name: "Unidade Belo Horizonte" },
-    ])
+    const [schools, setSchools] = useState<School[]>([])
     const [newUnitName, setNewUnitName] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+    const [selectedSchool, setSelectedSchool] = useState<School | null>(null)
+    const [editName, setEditName] = useState("")
 
-    const handleAddUnit = () => {
-        if (newUnitName.trim()) {
-            setUnits([...units, { id: units.length + 1, name: newUnitName.trim() }])
-            setNewUnitName("")
-            setIsDialogOpen(false)
+    useEffect(() => {
+        const fetchSchools = async () => {
+            try {
+                const response = await fetch('https://v1.destinify.com.br/api/school/list')
+                const data = await response.json()
+                setSchools(data)
+            } catch (error) {
+                console.error('Erro ao buscar unidades:', error)
+            }
+        }
+
+        fetchSchools()
+    }, [])
+
+    const handleAddUnit = async () => {
+        if (!newUnitName.trim()) return
+
+        try {
+            const response = await fetch('https://v1.destinify.com.br/api/school/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: newUnitName.trim(),
+                }),
+            })
+
+            if (response.ok) {
+                const newSchool = await response.json()
+                setSchools([...schools, newSchool])
+                setNewUnitName("")
+                setIsDialogOpen(false)
+            }
+        } catch (error) {
+            console.error('Erro ao criar unidade:', error)
+        }
+    }
+
+    const handleEdit = (school: School) => {
+        setSelectedSchool(school)
+        setEditName(school.name)
+        setIsEditDialogOpen(true)
+    }
+
+    const handleUpdate = async () => {
+        if (!selectedSchool) return
+
+        try {
+            const response = await fetch(`https://v1.destinify.com.br/api/school/edit/${selectedSchool.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: editName,
+                }),
+            })
+
+            if (response.ok) {
+                const updatedSchools = schools.map(school => 
+                    school.id === selectedSchool.id 
+                        ? { ...school, name: editName }
+                        : school
+                )
+                setSchools(updatedSchools)
+                setIsEditDialogOpen(false)
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar unidade:', error)
         }
     }
 
@@ -55,15 +128,7 @@ const UnidadesPage = () => {
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
-                    <div className="flex items-center gap-2 mr-4">
-                        <Avatar className="h-8 w-8 rounded-lg">
-                            <AvatarFallback className="rounded-lg bg-brand text-white font-extralight">JD</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                            <h3 className="text-sm font-semibold">John Doe</h3>
-                            <a className="cursor-pointer text-[10px] text-muted-foreground">Editar perfil</a>
-                        </div>
-                    </div>
+                    <UserProfile />
                 </header>
                 <main className="p-6">
                     <div className="flex justify-between items-center mb-6">
@@ -97,20 +162,53 @@ const UnidadesPage = () => {
                     </div>
                     <div className="">
                         <Table>
-                            <TableCaption>Lista de Unidades</TableCaption>
-                            <TableHeader >
+                            <TableCaption></TableCaption>
+                            <TableHeader>
                                 <TableRow className="mx-4">
                                     <TableHead className="md:w-[300px]">Data de criação</TableHead>
-                                    <TableHead>Status</TableHead>
                                     <TableHead>Nome</TableHead>
                                     <TableHead>Ação</TableHead>
                                 </TableRow>
-                                
                             </TableHeader>
+                            <TableBody>
+                                {schools.map((school) => (
+                                    <TableRow key={school.id}>
+                                        <TableCell>
+                                            {new Date(school.createdAt).toLocaleDateString('pt-BR')}
+                                        </TableCell>
+                                        <TableCell>{school.name}</TableCell>
+                                        <TableCell>
+                                            <Button variant="ghost" size="sm" onClick={() => handleEdit(school)}>
+                                                Editar
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
                         </Table>
                     </div>
                 </main>
             </SidebarInset>
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Editar Unidade</DialogTitle>
+                        <DialogDescription>Edite as informações da unidade.</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-1 items-center gap-4">
+                            <Input
+                                id="edit-name"
+                                placeholder="Nome da unidade"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                className="col-span-3"
+                            />
+                        </div>
+                    </div>
+                    <Button onClick={handleUpdate}>Salvar alterações</Button>
+                </DialogContent>
+            </Dialog>
         </SidebarProvider>
     )
 }

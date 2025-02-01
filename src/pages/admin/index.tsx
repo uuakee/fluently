@@ -1,4 +1,5 @@
 import { AdmSidebar } from "@/components/common/adm-sidebar"
+import { UserProfile } from "@/components/common/user-profile"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Breadcrumb,
@@ -88,15 +89,7 @@ const AdminPage = () => {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="flex items-center gap-2 mr-4">
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="rounded-lg bg-brand text-white font-extralight">JD</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <h3 className="text-sm font-semibold">John Doe</h3>
-              <a className="cursor-pointer text-[10px] text-muted-foreground">Editar perfil</a>
-            </div>
-          </div>
+          <UserProfile />
         </header>
         <div className="p-4 mt-4">
           <div className="w-full flex gap-2 p-4 md:p-0 bg-brand/5 h-36 rounded-lg items-center">
