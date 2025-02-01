@@ -19,9 +19,9 @@ import { PlusCircle } from 'lucide-react'
 import { Table, TableCaption, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { UserProfile } from "@/components/common/user-profile"
-import { DataTable } from "./data-table"
-import { columns } from "./columns"
-import type { Payment } from "./columns"
+import { DataTable } from "@/components/common/data-table"
+import { columns } from "@/components/common/columns"
+import type { Payment } from "@/components/common/columns"
 
 interface School {
     id: number
