@@ -25,9 +25,11 @@ interface CreateStudentData {
     name: string
     email: string
     password: string
+    phone: string
     adress: string
     amount: string
     numberOfInstallments: string
+    birthday: string
 }
 
 const AlunosPage = () => {
@@ -38,9 +40,11 @@ const AlunosPage = () => {
         name: "",
         email: "",
         password: "",
+        phone: "",
         adress: "",
         amount: "",
-        numberOfInstallments: ""
+        numberOfInstallments: "",
+        birthday: ""
     })
 
     const fetchStudents = async () => {
@@ -76,7 +80,9 @@ const AlunosPage = () => {
                     name: formData.name,
                     email: formData.email,
                     password: formData.password,
+                    phone: formData.phone,
                     adress: formData.adress,
+                    birthday: formData.birthday,
                     role: "STUDENT"
                 }),
             })
@@ -103,9 +109,11 @@ const AlunosPage = () => {
                         name: "", 
                         email: "", 
                         password: "", 
+                        phone: "",
                         adress: "",
                         amount: "",
-                        numberOfInstallments: ""
+                        numberOfInstallments: "",
+                        birthday: ""
                     })
                     fetchStudents()
                 } else {
@@ -192,12 +200,31 @@ const AlunosPage = () => {
                                             />
                                         </div>
                                         <div className="grid gap-2">
+                                            <Label htmlFor="phone">Senha</Label>
+                                            <Input
+                                                id="phone"
+                                                type="phone"
+                                                placeholder="Digite a senha"
+                                                value={formData.phone}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
                                             <Label htmlFor="adress">Endereço</Label>
                                             <Input
                                                 id="adress"
                                                 placeholder="Endereço completo"
                                                 value={formData.adress}
                                                 onChange={(e) => setFormData(prev => ({ ...prev, adress: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="birthday">Data de Nascimento</Label>
+                                            <Input
+                                                id="birthday"
+                                                type="date"
+                                                value={formData.birthday}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, birthday: e.target.value }))}
                                             />
                                         </div>
                                     </div>
