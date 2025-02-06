@@ -33,10 +33,23 @@ interface CreateStudentData {
     passport: string
 }
 
+interface School {
+    id: number;
+    name: string;
+}
+
+interface Subject {
+    id: number;
+    name: string;
+}
+
 const AlunosPage = () => {
     const [students, setStudents] = useState<Student[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [isSchoolSubjectDialogOpen, setIsSchoolSubjectDialogOpen] = useState(false)
+    const [selectedSchools, setSelectedSchools] = useState<number[]>([])
+    const [selectedSubjects, setSelectedSubjects] = useState<number[]>([])
     const [formData, setFormData] = useState<CreateStudentData>({
         name: "",
         email: "",
@@ -48,6 +61,8 @@ const AlunosPage = () => {
         birthday: "",
         passport: ""
     })
+    const [schools, setSchools] = useState<School[]>([]);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
 
     const fetchStudents = async () => {
         setIsLoading(true)
@@ -71,6 +86,25 @@ const AlunosPage = () => {
         fetchStudents()
     }, [])
 
+    useEffect(() => {
+        const fetchSchoolsAndSubjects = async () => {
+            const schoolsResponse = await fetch('https://v1.destinify.com.br/api/school/list');
+            const subjectsResponse = await fetch('https://v1.destinify.com.br/api/course/list');
+            
+            if (schoolsResponse.ok) {
+                const schoolsData = await schoolsResponse.json();
+                setSchools(schoolsData);
+            }
+
+            if (subjectsResponse.ok) {
+                const subjectsData = await subjectsResponse.json();
+                setSubjects(subjectsData);
+            }
+        };
+
+        fetchSchoolsAndSubjects();
+    }, []);
+
     const handleCreateStudent = async () => {
         try {
             const studentResponse = await fetch('https://v1.destinify.com.br/api/user/create', {
@@ -85,6 +119,7 @@ const AlunosPage = () => {
                     phone: formData.phone,
                     adress: formData.adress,
                     birthday: formData.birthday,
+                    passport: formData.passport,
                     role: "STUDENT"
                 }),
             })
@@ -127,6 +162,53 @@ const AlunosPage = () => {
             }
         } catch (error) {
             console.error('Erro ao cadastrar:', error)
+            toast.error("Erro ao cadastrar aluno")
+        }
+    }
+
+    const handleOpenSchoolSubjectDialog = () => {
+        setIsSchoolSubjectDialogOpen(true)
+        setIsDialogOpen(false)
+    }
+
+    const handleCreateStudentWithAssociations = async () => {
+        const studentResponse = await fetch('https://v1.destinify.com.br/api/user/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                phone: formData.phone,
+                adress: formData.adress,
+                birthday: formData.birthday,
+                passport: formData.passport,
+                role: "STUDENT"
+            }),
+        })
+
+        if (studentResponse.ok) {
+            const newStudent = await studentResponse.json()
+
+            await fetch('https://v1.destinify.com.br/api/enrollment/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: newStudent.userId,
+                    schoolIds: selectedSchools,
+                    subjectIds: selectedSubjects
+                }),
+            })
+
+            toast.success("Aluno e associações cadastrados com sucesso!")
+            setIsDialogOpen(false)
+            setIsSchoolSubjectDialogOpen(false)
+            fetchStudents()
+        } else {
             toast.error("Erro ao cadastrar aluno")
         }
     }
@@ -282,6 +364,62 @@ const AlunosPage = () => {
                             state={{ isLoading }}
                         />
                     </div>
+                    <Dialog open={isSchoolSubjectDialogOpen} onOpenChange={setIsSchoolSubjectDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button onClick={handleOpenSchoolSubjectDialog}>Próximo</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Selecionar Escolas e Matérias</DialogTitle>
+                                <DialogDescription>
+                                    Selecione as escolas e matérias para o aluno.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div>
+                                {/* Aqui você pode implementar a lógica para listar e selecionar escolas e matérias */}
+                                {/* Exemplo de checkboxes para escolas */}
+                                <h4>Escolas</h4>
+                                {/* Supondo que você tenha uma lista de escolas */}
+                                {schools.map(school => (
+                                    <div key={school.id}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSchools.includes(school.id)}
+                                            onChange={() => {
+                                                setSelectedSchools(prev => 
+                                                    prev.includes(school.id) 
+                                                        ? prev.filter(id => id !== school.id) 
+                                                        : [...prev, school.id]
+                                                );
+                                            }}
+                                        />
+                                        {school.name}
+                                    </div>
+                                ))}
+                                {/* Exemplo de checkboxes para matérias */}
+                                <h4>Matérias</h4>
+                                {subjects.map(subject => (
+                                    <div key={subject.id}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSubjects.includes(subject.id)}
+                                            onChange={() => {
+                                                setSelectedSubjects(prev => 
+                                                    prev.includes(subject.id) 
+                                                        ? prev.filter(id => id !== subject.id) 
+                                                        : [...prev, subject.id]
+                                                );
+                                            }}
+                                        />
+                                        {subject.name}
+                                    </div>
+                                ))}
+                            </div>
+                            <Button onClick={handleCreateStudentWithAssociations}>
+                                Finalizar Cadastro
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
                 </main>
             </SidebarInset>
         </SidebarProvider>
