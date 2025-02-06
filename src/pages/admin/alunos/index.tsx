@@ -29,7 +29,8 @@ interface CreateStudentData {
     adress: string
     amount: string
     numberOfInstallments: string
-    birthday: string
+    birthday: string,
+    passport: string
 }
 
 const AlunosPage = () => {
@@ -44,7 +45,8 @@ const AlunosPage = () => {
         adress: "",
         amount: "",
         numberOfInstallments: "",
-        birthday: ""
+        birthday: "",
+        passport: ""
     })
 
     const fetchStudents = async () => {
@@ -113,7 +115,8 @@ const AlunosPage = () => {
                         adress: "",
                         amount: "",
                         numberOfInstallments: "",
-                        birthday: ""
+                        birthday: "",
+                        passport: ""
                     })
                     fetchStudents()
                 } else {
@@ -218,14 +221,25 @@ const AlunosPage = () => {
                                                 onChange={(e) => setFormData(prev => ({ ...prev, adress: e.target.value }))}
                                             />
                                         </div>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="birthday">Data de Nascimento</Label>
-                                            <Input
-                                                id="birthday"
-                                                type="date"
-                                                value={formData.birthday}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, birthday: e.target.value }))}
-                                            />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="birthday">Data de Nascimento</Label>
+                                                <Input
+                                                    id="birthday"
+                                                    type="date"
+                                                    value={formData.birthday}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, birthday: e.target.value }))}
+                                                />
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="passport">Passaporte</Label>
+                                                <Input
+                                                    id="passport"
+                                                    type="text"
+                                                    value={formData.passport}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, passport: e.target.value }))}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="space-y-4">
