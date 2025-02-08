@@ -20,8 +20,10 @@ import { DataTable } from "@/components/common/data-table"
 import { columns } from "@/components/students/columns"
 import type { Student } from "@/components/students/columns"
 import { toast } from "sonner"
+import DialogRegister from "@/components/students/dialog-register"
 
 interface CreateStudentData {
+    userId: number
     name: string
     email: string
     password: string
@@ -51,6 +53,7 @@ const AlunosPage = () => {
     const [selectedSchools, setSelectedSchools] = useState<number[]>([])
     const [selectedSubjects, setSelectedSubjects] = useState<number[]>([])
     const [formData, setFormData] = useState<CreateStudentData>({
+        userId: 0,
         name: "",
         email: "",
         password: "",
@@ -63,6 +66,7 @@ const AlunosPage = () => {
     })
     const [schools, setSchools] = useState<School[]>([]);
     const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [studentData, setStudentData] = useState<CreateStudentData | null>(null);
 
     const fetchStudents = async () => {
         setIsLoading(true)
@@ -105,113 +109,14 @@ const AlunosPage = () => {
         fetchSchoolsAndSubjects();
     }, []);
 
-    const handleCreateStudent = async () => {
-        try {
-            const studentResponse = await fetch('https://v1.destinify.com.br/api/user/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                    phone: formData.phone,
-                    adress: formData.adress,
-                    birthday: formData.birthday,
-                    passport: formData.passport,
-                    role: "STUDENT"
-                }),
-            })
+    const handleOpenDialog = () => {
+        setIsDialogOpen(true);
+    };
 
-            if (studentResponse.ok) {
-                const newStudent = await studentResponse.json()
-                
-                const installmentsResponse = await fetch('https://v1.destinify.com.br/api/payment/create-installments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        userId: newStudent.userId,
-                        amount: formData.amount,
-                        numberOfInstallments: formData.numberOfInstallments
-                    }),
-                })
-
-                if (installmentsResponse.ok) {
-                    toast.success("Aluno e mensalidades cadastrados com sucesso!")
-                    setIsDialogOpen(false)
-                    setFormData({
-                        name: "", 
-                        email: "", 
-                        password: "", 
-                        phone: "",
-                        adress: "",
-                        amount: "",
-                        numberOfInstallments: "",
-                        birthday: "",
-                        passport: ""
-                    })
-                    fetchStudents()
-                } else {
-                    toast.error("Erro ao criar mensalidades")
-                }
-            } else {
-                toast.error("Erro ao cadastrar aluno")
-            }
-        } catch (error) {
-            console.error('Erro ao cadastrar:', error)
-            toast.error("Erro ao cadastrar aluno")
-        }
-    }
-
-    const handleOpenSchoolSubjectDialog = () => {
-        setIsSchoolSubjectDialogOpen(true)
-        setIsDialogOpen(false)
-    }
-
-    const handleCreateStudentWithAssociations = async () => {
-        const studentResponse = await fetch('https://v1.destinify.com.br/api/user/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-                phone: formData.phone,
-                adress: formData.adress,
-                birthday: formData.birthday,
-                passport: formData.passport,
-                role: "STUDENT"
-            }),
-        })
-
-        if (studentResponse.ok) {
-            const newStudent = await studentResponse.json()
-
-            await fetch('https://v1.destinify.com.br/api/enrollment/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    userId: newStudent.userId,
-                    schoolIds: selectedSchools,
-                    subjectIds: selectedSubjects
-                }),
-            })
-
-            toast.success("Aluno e associações cadastrados com sucesso!")
-            setIsDialogOpen(false)
-            setIsSchoolSubjectDialogOpen(false)
-            fetchStudents()
-        } else {
-            toast.error("Erro ao cadastrar aluno")
-        }
-    }
+    const handleStudentCreated = (newStudent: CreateStudentData) => {
+        setStudentData(newStudent);
+        fetchStudents();
+    };
 
     return (
         <SidebarProvider>
@@ -238,124 +143,16 @@ const AlunosPage = () => {
                 <main className="p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold">Alunos</h2>
-                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button className="bg-brand hover:bg-brand/90">
-                                    <PlusCircle className="mr-2 h-4 w-4" />
-                                    Cadastrar aluno
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Cadastrar Aluno</DialogTitle>
-                                    <DialogDescription>
-                                        Preencha os dados do aluno e configure as mensalidades.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="grid gap-4 py-4">
-                                    <div className="space-y-4">
-                                        <h4 className="font-medium">Dados do Aluno</h4>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="name">Nome completo</Label>
-                                            <Input
-                                                id="name"
-                                                placeholder="Nome do aluno"
-                                                value={formData.name}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                            />
-                                        </div>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="email">Email</Label>
-                                            <Input
-                                                id="email"
-                                                type="email"
-                                                placeholder="email@exemplo.com"
-                                                value={formData.email}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                                            />
-                                        </div>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="password">Senha</Label>
-                                            <Input
-                                                id="password"
-                                                type="password"
-                                                placeholder="Digite a senha"
-                                                value={formData.password}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                                            />
-                                        </div>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="phone">Senha</Label>
-                                            <Input
-                                                id="phone"
-                                                type="phone"
-                                                placeholder="Digite a senha"
-                                                value={formData.phone}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                                            />
-                                        </div>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="adress">Endereço</Label>
-                                            <Input
-                                                id="adress"
-                                                placeholder="Endereço completo"
-                                                value={formData.adress}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, adress: e.target.value }))}
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="birthday">Data de Nascimento</Label>
-                                                <Input
-                                                    id="birthday"
-                                                    type="date"
-                                                    value={formData.birthday}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, birthday: e.target.value }))}
-                                                />
-                                            </div>
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="passport">Passaporte</Label>
-                                                <Input
-                                                    id="passport"
-                                                    type="text"
-                                                    value={formData.passport}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, passport: e.target.value }))}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-4">
-                                        <h4 className="font-medium">Configuração das Mensalidades</h4>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="amount">Valor da Mensalidade</Label>
-                                                <Input
-                                                    id="amount"
-                                                    type="number"
-                                                    placeholder="Digite o valor"
-                                                    value={formData.amount}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-                                                />
-                                            </div>
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="installments">Nº de Parcelas</Label>
-                                                <Input
-                                                    id="installments"
-                                                    type="number"
-                                                    placeholder="Digite o número de parcelas"
-                                                    value={formData.numberOfInstallments}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, numberOfInstallments: e.target.value }))}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <Button onClick={handleCreateStudent}>
-                                    Cadastrar Aluno
-                                </Button>
-                            </DialogContent>
-                        </Dialog>
+                        <Button className="bg-brand hover:bg-brand/90" onClick={handleOpenDialog}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Cadastrar aluno
+                        </Button>
                     </div>
+                    <DialogRegister 
+                        isOpen={isDialogOpen} 
+                        onOpenChange={setIsDialogOpen} 
+                        onStudentCreated={handleStudentCreated} 
+                    />
                     <div>
                         <DataTable 
                             columns={columns} 
@@ -364,62 +161,6 @@ const AlunosPage = () => {
                             state={{ isLoading }}
                         />
                     </div>
-                    <Dialog open={isSchoolSubjectDialogOpen} onOpenChange={setIsSchoolSubjectDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button onClick={handleOpenSchoolSubjectDialog}>Próximo</Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Selecionar Escolas e Matérias</DialogTitle>
-                                <DialogDescription>
-                                    Selecione as escolas e matérias para o aluno.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div>
-                                {/* Aqui você pode implementar a lógica para listar e selecionar escolas e matérias */}
-                                {/* Exemplo de checkboxes para escolas */}
-                                <h4>Escolas</h4>
-                                {/* Supondo que você tenha uma lista de escolas */}
-                                {schools.map(school => (
-                                    <div key={school.id}>
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedSchools.includes(school.id)}
-                                            onChange={() => {
-                                                setSelectedSchools(prev => 
-                                                    prev.includes(school.id) 
-                                                        ? prev.filter(id => id !== school.id) 
-                                                        : [...prev, school.id]
-                                                );
-                                            }}
-                                        />
-                                        {school.name}
-                                    </div>
-                                ))}
-                                {/* Exemplo de checkboxes para matérias */}
-                                <h4>Matérias</h4>
-                                {subjects.map(subject => (
-                                    <div key={subject.id}>
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedSubjects.includes(subject.id)}
-                                            onChange={() => {
-                                                setSelectedSubjects(prev => 
-                                                    prev.includes(subject.id) 
-                                                        ? prev.filter(id => id !== subject.id) 
-                                                        : [...prev, subject.id]
-                                                );
-                                            }}
-                                        />
-                                        {subject.name}
-                                    </div>
-                                ))}
-                            </div>
-                            <Button onClick={handleCreateStudentWithAssociations}>
-                                Finalizar Cadastro
-                            </Button>
-                        </DialogContent>
-                    </Dialog>
                 </main>
             </SidebarInset>
         </SidebarProvider>

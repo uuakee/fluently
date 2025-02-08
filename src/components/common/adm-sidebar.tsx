@@ -57,25 +57,37 @@ const data = {
           title: "Materias",
           url: "/admin/materias",
         },
-      ],
-    },
-    {
-      title: "Financeiro",
-      url: "#",
-      icon: PiggyBank,
-      items: [
         {
-          title: "Mensalidades",
+          title: "Financeiro",
           url: "/admin/mensalidades",
         },
         {
-          title: "Declarações",
+          title: "Declarações (Em breve)",
           url: "/admin/declaracoes",
         },
+        {
+          title: "Turmas (Em breve)",
+          url: "/admin/turmas",
+      },
       ],
     },
+    // {
+    //   title: "Financeiro",
+    //   url: "#",
+    //   icon: PiggyBank,
+    //   items: [
+    //     {
+    //       title: "Mensalidades",
+    //       url: "/admin/mensalidades",
+    //     },
+    //     {
+    //       title: "Declarações",
+    //       url: "/admin/declaracoes",
+    //     },
+    //   ],
+    // },
     {
-        title: "Gestão",
+        title: "Gestão de pessoas",
         url: "#",
         icon: Users2,
         isActive: false,
@@ -89,8 +101,8 @@ const data = {
                 url: "/admin/alunos",
             },
             {
-                title: "Turmas",
-                url: "/admin/turmas",
+                title: "Administrativos (Em breve)",
+                url: "/admin/administrativos",
             },
           ]
     },
@@ -109,14 +121,14 @@ const data = {
   navSecondary: [
     {
       title: "Suporte",
-      url: "#",
+      url: "https://api.whatsapp.com/send?phone=5561935001090",
       icon: LifeBuoy,
     },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
+    // {
+    //   title: "Feedback",
+    //   url: "#",
+    //   icon: Send,
+    // },
   ],
   projects: [
     {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { EditProfileDialog } from "./EditProfileDialog"
 
 interface User {
     name: string
@@ -8,6 +9,7 @@ interface User {
 
 export function UserProfile() {
     const [user, setUser] = useState<User | null>(null)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -53,10 +55,18 @@ export function UserProfile() {
             </Avatar>
             <div className="flex flex-col">
                 <h3 className="text-sm font-semibold">{user.name}</h3>
-                <a className="cursor-pointer text-[10px] text-muted-foreground">
+                <a
+                    className="cursor-pointer text-[10px] text-muted-foreground"
+                    onClick={() => setIsDialogOpen(true)}
+                >
                     Editar perfil
                 </a>
             </div>
+            <EditProfileDialog
+                isOpen={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                user={user}
+            />
         </div>
     )
 } 
