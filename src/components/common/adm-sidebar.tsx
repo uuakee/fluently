@@ -46,105 +46,92 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Dashboard",
+          title: "Financeiro",
+          url: "/admin/mensalidades",
+        },
+        {
+          title: "Gráfico de desempenho",
           url: "/admin",
+        },
+        {
+          title: "Funcionários (Em breve)",
+          url: "/admin/funcionarios",
         },
         {
           title: "Unidades",
           url: "/admin/unidades",
         },
         {
-          title: "Materias",
-          url: "/admin/materias",
+          title: "Material (Em breve)",
+          url: "/admin/material",
         },
         {
-          title: "Financeiro",
-          url: "/admin/mensalidades",
-        },
-        {
-          title: "Declarações (Em breve)",
+          title: "Livros (Em breve)",
           url: "/admin/declaracoes",
         },
-        {
-          title: "Turmas (Em breve)",
-          url: "/admin/turmas",
-      },
       ],
     },
-    // {
-    //   title: "Financeiro",
-    //   url: "#",
-    //   icon: PiggyBank,
-    //   items: [
-    //     {
-    //       title: "Mensalidades",
-    //       url: "/admin/mensalidades",
-    //     },
-    //     {
-    //       title: "Declarações",
-    //       url: "/admin/declaracoes",
-    //     },
-    //   ],
-    // },
     {
-        title: "Gestão de pessoas",
+        title: "Alunos",
         url: "#",
         icon: Users2,
         isActive: false,
         items: [
             {
-              title: "Professores",
-              url: "/admin/professores",
-            },
-            {
-                title: "Alunos",
+                title: "Matrículas",
                 url: "/admin/alunos",
             },
             {
-                title: "Administrativos (Em breve)",
-                url: "/admin/administrativos",
+                title: "Contratos",
+                url: "/admin/contratos",
             },
+            {
+              title: "Certificados",
+              url: "/admin/certificados",
+          },
+          {
+            title: "Notas",
+            url: "/admin/notas",
+          },
+          {
+            title: "Presenças",
+            url: "/admin/presencas",
+          },
+          {
+            title: "Declarações",
+            url: "/admin/declaracoes",
+          },
+          {
+            title: "Mensalidades",
+            url: "/admin/mensalidades",
+          },
           ]
     },
-    // {
-    //   title: "Materiais didáticos",
-    //   url: "#",
-    //   icon: BookOpen,
-    //   items: [
-    //     {
-    //       title: "Apostilas",
-    //       url: "/admin/apostilas",
-    //     },
-    //   ],
-    // },
+    {
+      title: "Professores",
+      url: "#",
+      icon: BookOpen,
+      items: [
+        {
+          title: "Cadastro",
+          url: "/admin/professores",
+        },
+        {
+          title: "Pagamentos",
+          url: "/admin/pagamentos-professores",
+        },
+        {
+          title: "Material",
+          url: "/admin/material-professores",
+        },
+      ],
+    },
   ],
   navSecondary: [
     {
       title: "Suporte",
       url: "https://api.whatsapp.com/send?phone=5561935001090",
       icon: LifeBuoy,
-    },
-    // {
-    //   title: "Feedback",
-    //   url: "#",
-    //   icon: Send,
-    // },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 }
