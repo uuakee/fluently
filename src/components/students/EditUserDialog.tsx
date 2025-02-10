@@ -33,7 +33,7 @@ export function EditUserDialog({ isOpen, onOpenChange, user, onUserUpdated }: Ed
 
     const handleUpdateUser = async () => {
         try {
-            const response = await fetch(`https://v5.destinify.com.br/api/user/${user.id}`, {
+            const response = await fetch(`https://v5.destinify.com.br/api/user/edit/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
