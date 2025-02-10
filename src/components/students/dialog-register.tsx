@@ -25,6 +25,7 @@ interface CreateStudentData {
     passport: string;
     gender: string;
     level_school: string;
+    unit_school: string;
 }
 
 interface DialogRegisterProps {
@@ -47,7 +48,8 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
         name_family: "",
         passport: "",
         gender: "",
-        level_school: ""
+        level_school: "",
+        unit_school: "",
     });
 
     const handleCreateStudent = async () => {
@@ -150,15 +152,6 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
                                 onChange={(e) => setFormData(prev => ({ ...prev, adress: e.target.value }))}
                             />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="name_family">Nome do Responsável</Label>
-                            <Input
-                                id="name_family"
-                                placeholder="Nome do Responsável, caso não tenha, deixe em branco"
-                                value={formData.name_family}
-                                onChange={(e) => setFormData(prev => ({ ...prev, name_family: e.target.value }))}
-                            />
-                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="birthday">Data de Nascimento</Label>
@@ -208,6 +201,32 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
                                         <SelectItem value="FUNDAMENTAL">Fundamental</SelectItem>
                                         <SelectItem value="MEDIO">Médio</SelectItem>
                                         <SelectItem value="SUPERIOR">Superior</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="name_family">Nome do Responsável</Label>
+                                <Input
+                                    id="name_family"
+                                    placeholder="Nome do Responsável, caso não tenha, deixe em branco"
+                                    value={formData.name_family}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, name_family: e.target.value }))}
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="unit_school">Unidade</Label>
+                                <Select
+                                    value={formData.unit_school}
+                                    onValueChange={(value) => setFormData(prev => ({ ...prev, unit_school: value }))}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecionar unidade..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="EUA">🇺🇸 EUA</SelectItem>
+                                        <SelectItem value="BRASIL">🇧🇷 Brasil</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
