@@ -27,11 +27,12 @@ export type Student = {
   id: number
   name: string
   email: string
-  adress: string
-  role: string
+  birthday: string
+  passport: string | null
+  name_family: string | null
+  unit_school: 'BRASIL' | 'EUA'
   createdAt: string
   updatedAt: string
-  pendingPayments: number
 }
 
 interface DeleteStudentDialogProps {
@@ -85,17 +86,37 @@ export const columns: ColumnDef<Student>[] = [
     header: "Email",
   },
   {
-    accessorKey: "adress",
-    header: "Endereço",
+    accessorKey: "birthday",
+    header: "Data de Nascimento",
+    cell: ({ row }) => {
+      const birthday = row.getValue("birthday") as string
+      return birthday ? new Date(birthday).toLocaleDateString('pt-BR') : '-'
+    },
   },
   {
-    accessorKey: "pendingPayments",
-    header: "Mensalidades Pendentes",
+    accessorKey: "passport",
+    header: "Passaporte/RG",
     cell: ({ row }) => {
-      const pendingPayments = row.getValue("pendingPayments") as number
+      const passport = row.getValue("passport") as string | null
+      return passport || "-"
+    },
+  },
+  {
+    accessorKey: "name_family",
+    header: "Nome do Responsável",
+    cell: ({ row }) => {
+      const nameFamily = row.getValue("name_family") as string | null
+      return nameFamily || "-"
+    },
+  },
+  {
+    accessorKey: "unit_school",
+    header: "Unidade",
+    cell: ({ row }) => {
+      const unit = row.getValue("unit_school") as string
       return (
-        <Badge variant={pendingPayments > 0 ? "destructive" : "secondary"}>
-          {pendingPayments}
+        <Badge variant="outline">
+          {unit === 'EUA' ? '🇺🇸 EUA' : '🇧🇷 Brasil'}
         </Badge>
       )
     },
