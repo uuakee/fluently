@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CirclePlus } from "lucide-react";
 
 interface CreateStudentData {
     userId: number;
@@ -235,8 +235,8 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
                     </div>
                 </div>
                 <Button onClick={handleCreateStudent} className="bg-brand hover:bg-brand/90">
-                    Próximo
-                    <ArrowRight className="h-4 w-4" />
+                    <CirclePlus className="h-4 w-4" />
+                    Adicionar
                 </Button>
             </DialogContent>
         </Dialog>
