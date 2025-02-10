@@ -17,7 +17,7 @@ export function UserProfile() {
                 const token = localStorage.getItem('auth_token')
                 if (!token) return
 
-                const response = await fetch('https://v1.destinify.com.br/api/auth/me', {
+                const response = await fetch('https://v5.destinify.com.br/api/auth/me', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

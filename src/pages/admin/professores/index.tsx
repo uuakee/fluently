@@ -56,7 +56,7 @@ const ProfessoresPage = () => {
     useEffect(() => {
         const fetchSchools = async () => {
             try {
-                const response = await fetch('https://v1.destinify.com.br/api/school/list')
+                const response = await fetch('https://v5.destinify.com.br/api/school/list')
                 const data = await response.json()
                 setSchools(data)
             } catch (error) {
@@ -69,7 +69,7 @@ const ProfessoresPage = () => {
 
     const fetchTeachers = async () => {
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/user/teachers')
+            const response = await fetch('https://v5.destinify.com.br/api/user/teachers')
             if (!response.ok) {
                 throw new Error('Falha ao buscar professores')
             }
@@ -90,7 +90,7 @@ const ProfessoresPage = () => {
         if (!newUnitName.trim()) return
 
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/school/create', {
+            const response = await fetch('https://v5.destinify.com.br/api/school/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ const ProfessoresPage = () => {
         if (!selectedSchool) return
 
         try {
-            const response = await fetch(`https://v1.destinify.com.br/api/school/edit/${selectedSchool.id}`, {
+            const response = await fetch(`https://v5.destinify.com.br/api/school/edit/${selectedSchool.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ const ProfessoresPage = () => {
 
     const handleCreateTeacher = async () => {
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/user/create-teacher', {
+            const response = await fetch('https://v5.destinify.com.br/api/user/create-teacher', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -71,7 +71,7 @@ const AlunosPage = () => {
     const fetchStudents = async () => {
         setIsLoading(true)
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/user/students')
+            const response = await fetch('https://v5.destinify.com.br/api/user/students')
             if (!response.ok) {
                 throw new Error('Falha ao buscar alunos')
             }
@@ -92,8 +92,8 @@ const AlunosPage = () => {
 
     useEffect(() => {
         const fetchSchoolsAndSubjects = async () => {
-            const schoolsResponse = await fetch('https://v1.destinify.com.br/api/school/list');
-            const subjectsResponse = await fetch('https://v1.destinify.com.br/api/course/list');
+            const schoolsResponse = await fetch('https://v5.destinify.com.br/api/school/list');
+            const subjectsResponse = await fetch('https://v5.destinify.com.br/api/course/list');
             
             if (schoolsResponse.ok) {
                 const schoolsData = await schoolsResponse.json();

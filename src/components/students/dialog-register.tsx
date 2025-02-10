@@ -57,7 +57,7 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
         }
 
         try {
-            const studentResponse = await fetch('https://v1.destinify.com.br/api/user/create', {
+            const studentResponse = await fetch('https://v5.destinify.com.br/api/user/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

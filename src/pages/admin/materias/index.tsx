@@ -39,7 +39,7 @@ const MateriasPage = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await fetch('https://v1.destinify.com.br/api/course/list')
+                const response = await fetch('https://v5.destinify.com.br/api/course/list')
                 const data = await response.json()
                 setCourses(data)
             } catch (error) {
@@ -61,7 +61,7 @@ const MateriasPage = () => {
         if (!selectedCourse) return
 
         try {
-            const response = await fetch(`https://v1.destinify.com.br/api/course/edit/${selectedCourse.id}`, {
+            const response = await fetch(`https://v5.destinify.com.br/api/course/edit/${selectedCourse.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const MateriasPage = () => {
 
     const handleCreate = async () => {
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/course/create', {
+            const response = await fetch('https://v5.destinify.com.br/api/course/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

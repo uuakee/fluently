@@ -38,7 +38,7 @@ const UnidadesPage = () => {
     useEffect(() => {
         const fetchSchools = async () => {
             try {
-                const response = await fetch('https://v1.destinify.com.br/api/school/list')
+                const response = await fetch('https://v5.destinify.com.br/api/school/list')
                 const data = await response.json()
                 setSchools(data)
             } catch (error) {
@@ -53,7 +53,7 @@ const UnidadesPage = () => {
         if (!newUnitName.trim()) return
 
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/school/create', {
+            const response = await fetch('https://v5.destinify.com.br/api/school/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const UnidadesPage = () => {
         if (!selectedSchool) return
 
         try {
-            const response = await fetch(`https://v1.destinify.com.br/api/school/edit/${selectedSchool.id}`, {
+            const response = await fetch(`https://v5.destinify.com.br/api/school/edit/${selectedSchool.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

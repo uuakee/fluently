@@ -72,7 +72,7 @@ const MensalidadesPage = () => {
     useEffect(() => {
         const fetchSchools = async () => {
             try {
-                const response = await fetch('https://v1.destinify.com.br/api/school/list')
+                const response = await fetch('https://v5.destinify.com.br/api/school/list')
                 const data = await response.json()
                 setSchools(data)
             } catch (error) {
@@ -85,7 +85,7 @@ const MensalidadesPage = () => {
 
     const fetchPayments = async () => {
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/payment/get-all-installments')
+            const response = await fetch('https://v5.destinify.com.br/api/payment/get-all-installments')
             const data = await response.json()
             setPayments(data)
         } catch (error) {
@@ -100,7 +100,7 @@ const MensalidadesPage = () => {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const response = await fetch('https://v1.destinify.com.br/api/user/students')
+                const response = await fetch('https://v5.destinify.com.br/api/user/students')
                 if (!response.ok) {
                     throw new Error('Falha ao buscar estudantes')
                 }
@@ -124,7 +124,7 @@ const MensalidadesPage = () => {
         }
 
         try {
-            const response = await fetch('https://v1.destinify.com.br/api/payment/create-installments', {
+            const response = await fetch('https://v5.destinify.com.br/api/payment/create-installments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

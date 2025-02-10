@@ -138,7 +138,7 @@ export const columns: ColumnDef<Student>[] = [
       const handleDelete = async () => {
         setIsDeleting(true)
         try {
-          const response = await fetch(`https://v1.destinify.com.br/api/user/student/${student.id}`, {
+          const response = await fetch(`https://v5.destinify.com.br/api/user/student/${student.id}`, {
             method: 'DELETE',
           })
 

@@ -17,7 +17,7 @@ export function EditProfileDialog({ isOpen, onOpenChange, user }: EditProfileDia
     const handleUpdatePassword = async () => {
         try {
             const token = localStorage.getItem('auth_token');
-            const response = await fetch('https://v1.destinify.com.br/api/user/update-password', {
+            const response = await fetch('https://v5.destinify.com.br/api/user/update-password', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
