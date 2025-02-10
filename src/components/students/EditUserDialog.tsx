@@ -31,6 +31,13 @@ interface EditUserDialogProps {
 export function EditUserDialog({ isOpen, onOpenChange, user, onUserUpdated }: EditUserDialogProps) {
     const [formData, setFormData] = useState(user);
 
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            setFormData(user);
+        }
+        onOpenChange(open);
+    };
+
     const handleUpdateUser = async () => {
         try {
             const response = await fetch(`https://v5.destinify.com.br/api/user/edit/${user.id}`, {
@@ -66,7 +73,11 @@ export function EditUserDialog({ isOpen, onOpenChange, user, onUserUpdated }: Ed
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <Dialog 
+            open={isOpen} 
+            onOpenChange={handleOpenChange}
+            modal={true}
+        >
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Editar Aluno</DialogTitle>

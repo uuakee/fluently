@@ -52,6 +52,29 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
         unit_school: "",
     });
 
+    // Resetar o formulário quando o modal for fechado
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            setFormData({
+                userId: 0,
+                name: "",
+                email: "",
+                password: "",
+                phone: "",
+                adress: "",
+                amount: "",
+                numberOfInstallments: "",
+                birthday: "",
+                name_family: "",
+                passport: "",
+                gender: "",
+                level_school: "",
+                unit_school: "",
+            });
+        }
+        onOpenChange(open);
+    };
+
     const handleCreateStudent = async () => {
         if (!formData.name || !formData.email || !formData.password || !formData.phone || !formData.birthday || !formData.gender || !formData.level_school) {
             toast.error("Nome, email, senha, telefone, data de nascimento, gênero e nível escolar são obrigatórios");
@@ -94,7 +117,11 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <Dialog 
+            open={isOpen} 
+            onOpenChange={handleOpenChange}
+            modal={true}
+        >
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Cadastrar Aluno</DialogTitle>
