@@ -22,14 +22,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
+import { EditUserDialog } from "./EditUserDialog"
 
 export type Student = {
   id: number
   name: string
   email: string
+  phone: string
+  adress: string
   birthday: string
   passport: string | null
   name_family: string | null
+  gender: string
+  level_school: string
   unit_school: 'BRASIL' | 'EUA'
   createdAt: string
   updatedAt: string
@@ -113,12 +118,8 @@ export const columns: ColumnDef<Student>[] = [
     accessorKey: "unit_school",
     header: "Unidade",
     cell: ({ row }) => {
-      const unit = row.getValue("unit_school") as string
-      return (
-        <Badge variant="outline">
-          {unit === 'EUA' ? '🇺🇸 EUA' : '🇧🇷 Brasil'}
-        </Badge>
-      )
+        const unit = row.getValue("unit_school") as string
+        return unit === 'EUA' ? '🇺🇸 EUA' : '🇧🇷 Brasil'
     },
   },
   {
@@ -133,6 +134,7 @@ export const columns: ColumnDef<Student>[] = [
     cell: ({ row, table }) => {
       const student = row.original
       const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+      const [editDialogOpen, setEditDialogOpen] = useState(false)
       const [isDeleting, setIsDeleting] = useState(false)
 
       const handleDelete = async () => {
@@ -172,11 +174,11 @@ export const columns: ColumnDef<Student>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem disabled={isDeleting}>
+              <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => setDeleteDialogOpen(true)}
                 disabled={isDeleting}
@@ -186,6 +188,13 @@ export const columns: ColumnDef<Student>[] = [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <EditUserDialog
+            isOpen={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            user={student}
+            onUserUpdated={(table.options.meta as TableMeta).refetch}
+          />
 
           <DeleteStudentDialog
             open={deleteDialogOpen}
