@@ -74,6 +74,7 @@ const DialogRegister: React.FC<DialogRegisterProps> = ({ isOpen, onOpenChange, o
                     passport: formData.passport,
                     name_family: formData.name_family,
                     gender: formData.gender,
+                    unit_school: formData.unit_school,
                     level_school: formData.level_school,
                     role: "STUDENT"
                 }),
