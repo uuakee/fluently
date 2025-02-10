@@ -78,7 +78,7 @@ function DeleteStudentDialog({
 }
 
 type TableMeta = {
-  refetch: () => Promise<void>
+  refetch?: () => Promise<void>
 }
 
 export const columns: ColumnDef<Student>[] = [
@@ -146,7 +146,7 @@ export const columns: ColumnDef<Student>[] = [
 
           if (response.ok) {
             toast.success("Aluno excluído com sucesso!")
-            await (table.options.meta as TableMeta).refetch()
+            await (table.options.meta as TableMeta)?.refetch?.()
           } else {
             toast.error("Erro ao excluir aluno")
           }
@@ -193,7 +193,9 @@ export const columns: ColumnDef<Student>[] = [
             isOpen={editDialogOpen}
             onOpenChange={setEditDialogOpen}
             user={student}
-            onUserUpdated={(table.options.meta as TableMeta).refetch}
+            onUserUpdated={async () => {
+              await (table.options.meta as TableMeta)?.refetch?.()
+            }}
           />
 
           <DeleteStudentDialog
